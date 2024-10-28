@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>1c4434e2-039a-4e4d-be8b-3388855e1123</ProjectGuid>
+    <ProjectGuid>{1C4434E2-039A-4E4D-BE8B-3388855E1123}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PACShop.Service</RootNamespace>
@@ -31,24 +31,34 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="Microsoft.CSharp"/>
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Net.Http"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="PostCategoryService.cs" />
+    <Compile Include="PostService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PACShop.Common\PACShop.Common.csproj">
+      <Project>{8243820e-d3c7-4c09-ba2c-dcb3d0a4bbd4}</Project>
+      <Name>PACShop.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PACShop.Data\PACShop.Data.csproj">
+      <Project>{553bdc66-99b5-4bb7-a336-4602a6959479}</Project>
+      <Name>PACShop.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PACShop.Model\PACShop.Model.csproj">
+      <Project>{b7ab2e80-43a3-4507-8f85-7da1d8c6155b}</Project>
+      <Name>PACShop.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
- </Project>
+</Project>

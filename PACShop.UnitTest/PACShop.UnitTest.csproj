@@ -52,17 +52,40 @@
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.2.1.2\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="Moq, Version=4.2.1510.2205, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.2.1510.2205\lib\net40\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RepositoryTest\PostCategoryRepositoryTest.cs" />
+    <Compile Include="ServiceTest\PostCategoryServiceTest.cs" />
     <Compile Include="UnitTest1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PACShop.Common\PACShop.Common.csproj">
+      <Project>{8243820e-d3c7-4c09-ba2c-dcb3d0a4bbd4}</Project>
+      <Name>PACShop.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PACShop.Data\PACShop.Data.csproj">
+      <Project>{553bdc66-99b5-4bb7-a336-4602a6959479}</Project>
+      <Name>PACShop.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PACShop.Model\PACShop.Model.csproj">
+      <Project>{b7ab2e80-43a3-4507-8f85-7da1d8c6155b}</Project>
+      <Name>PACShop.Model</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PACShop.Service\PACShop.Service.csproj">
+      <Project>{1c4434e2-039a-4e4d-be8b-3388855e1123}</Project>
+      <Name>PACShop.Service</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

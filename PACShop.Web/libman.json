@@ -1,0 +1,10 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "angular@1.5.5",
+      "destination": "Scripts/plugins/"
+    }
+  ]
+}

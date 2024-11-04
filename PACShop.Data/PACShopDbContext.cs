@@ -1,4 +1,5 @@
-﻿using PACShop.Model.Models;
+﻿using Microsoft.AspNet.Identity.EntityFramework;
+using PACShop.Model.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -6,9 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace PACShop.Data
 {
-    public class PACShopDbContext : DbContext
+    public class PACShopDbContext : IdentityDbContext<ApplicationUser>
     {
         public PACShopDbContext() : base("PACShopConnection")
         {
@@ -35,11 +37,18 @@ namespace PACShop.Data
         public DbSet<Tag> Tags { set; get; }
 
         public DbSet<VisitorStatistic> VisitorStatistics { set; get; }
+        public DbSet<Error> Errors { set; get; }
 
 
+        public static PACShopDbContext Create()
+        {
+            return new PACShopDbContext();
+        }
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             //base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<IdentityUserRole>().HasKey(i => new { i.UserId, i.RoleId });
+            modelBuilder.Entity<IdentityUserLogin>().HasKey(i => i.UserId);
         }
     }
 }

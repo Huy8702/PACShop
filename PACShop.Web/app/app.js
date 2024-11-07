@@ -1,7 +1,11 @@
 ﻿/// <reference path="../assets/admin/libs/angular/angular.js" />
 
 (function () {
-    angular.module('pacshop', ['pacshop.products', 'pacshop.common']).config(config);
+    angular.module('pacshop',
+        ['pacshop.products',
+         'pacshop.product_categories',
+         'pacshop.common'])
+        .config(config);
 
     config.$inject = ['$stateProvider', '$urlRouterProvider'];
 

@@ -30,34 +30,34 @@ namespace PACShop.Web.App_Start
 
             app.CreatePerOwinContext<ApplicationUserManager>(ApplicationUserManager.Create);
             app.CreatePerOwinContext<ApplicationSignInManager>(ApplicationSignInManager.Create);
-            //app.CreatePerOwinContext<UserManager<ApplicationUser>>(CreateManager);
+            app.CreatePerOwinContext<UserManager<ApplicationUser>>(CreateManager);
 
-            //app.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions
-            //{
-            //    TokenEndpointPath = new PathString("/oauth/token"),
-            //    Provider = new AuthorizationServerProvider(),
-            //    AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
-            //    AllowInsecureHttp = true,
-
-            //});
-            //app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
-
-            // Configure the sign in cookie
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
+            app.UseOAuthAuthorizationServer(new OAuthAuthorizationServerOptions
             {
-                AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                //LoginPath = new PathString("/dang-nhap.html"),
-                LoginPath = new PathString("/Account/Login"),
-                Provider = new CookieAuthenticationProvider
-                {
-                    // Enables the application to validate the security stamp when the user logs in.
-                    // This is a security feature which is used when you change a password or add an external login to your account.  
-                    OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
-                        validateInterval: TimeSpan.FromMinutes(30),
-                        regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager, DefaultAuthenticationTypes.ApplicationCookie))
-                }
+                TokenEndpointPath = new PathString("/oauth/token"),
+                Provider = new AuthorizationServerProvider(),
+                AccessTokenExpireTimeSpan = TimeSpan.FromMinutes(30),
+                AllowInsecureHttp = true,
+
             });
-            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+            app.UseOAuthBearerAuthentication(new OAuthBearerAuthenticationOptions());
+            #region
+            // Configure the sign in cookie
+            //app.UseCookieAuthentication(new CookieAuthenticationOptions
+            //{
+            //    AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
+            //    //LoginPath = new PathString("/dang-nhap.html"),
+            //    LoginPath = new PathString("/Account/Login"),
+            //    Provider = new CookieAuthenticationProvider
+            //    {
+            //        // Enables the application to validate the security stamp when the user logs in.
+            //        // This is a security feature which is used when you change a password or add an external login to your account.  
+            //        OnValidateIdentity = SecurityStampValidator.OnValidateIdentity<ApplicationUserManager, ApplicationUser>(
+            //            validateInterval: TimeSpan.FromMinutes(30),
+            //            regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager, DefaultAuthenticationTypes.ApplicationCookie))
+            //    }
+            //});
+            //app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
 
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(
@@ -77,68 +77,60 @@ namespace PACShop.Web.App_Start
             //    ClientId = "712161982861-4d9bdgfvf6pti1vviifjogopqdqlft56.apps.googleusercontent.com",
             //    ClientSecret = "T0cgiSG6Gi7BKMr-fCCkdErO"
             //});
+            #endregion
+        }      
+
+        public class AuthorizationServerProvider : OAuthAuthorizationServerProvider
+        {
+            public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
+            {
+                context.Validated();
+            }
+            public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
+            {
+                var allowedOrigin = context.OwinContext.Get<string>("as:clientAllowedOrigin");
+
+                if (allowedOrigin == null) allowedOrigin = "*";
+
+                context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { allowedOrigin });
+
+                UserManager<ApplicationUser> userManager = context.OwinContext.GetUserManager<UserManager<ApplicationUser>>();
+                ApplicationUser user;
+                try
+                {
+                    user = await userManager.FindAsync(context.UserName, context.Password);
+                }
+                catch
+                {
+                    // Could not retrieve the user due to error.
+                    context.SetError("server_error");
+                    context.Rejected();
+                    return;
+                }
+                if (user != null)
+                {
+                    ClaimsIdentity identity = await userManager.CreateIdentityAsync(
+                                                           user,
+                                                           DefaultAuthenticationTypes.ExternalBearer);
+                    context.Validated(identity);
+                }
+                else
+                {
+                    context.SetError("invalid_grant", "Tài khoản hoặc mật khẩu không đúng.'");
+                    context.Rejected();
+                }
+            }
         }
-        //public class AuthorizationServerProvider : OAuthAuthorizationServerProvider
-        //{
-        //    public override async Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
-        //    {
-        //        context.Validated();
-        //    }
-        //    public override async Task GrantResourceOwnerCredentials(OAuthGrantResourceOwnerCredentialsContext context)
-        //    {
-        //        var allowedOrigin = context.OwinContext.Get<string>("as:clientAllowedOrigin");
-
-        //        if (allowedOrigin == null) allowedOrigin = "*";
-
-        //        context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { allowedOrigin });
-
-        //        UserManager<ApplicationUser> userManager = context.OwinContext.GetUserManager<UserManager<ApplicationUser>>();
-        //        ApplicationUser user;
-        //        try
-        //        {
-        //            user = await userManager.FindAsync(context.UserName, context.Password);
-        //        }
-        //        catch
-        //        {
-        //            // Could not retrieve the user due to error.
-        //            context.SetError("server_error");
-        //            context.Rejected();
-        //            return;
-        //        }
-        //        if (user != null)
-        //        {
-        //            var applicationGroupService = ServiceFactory.Get<IApplicationGroupService>();
-        //            var listGroup = applicationGroupService.GetListGroupByUserId(user.Id);
-        //            if (listGroup.Any(x => x.Name == CommonConstants.Administrator))
-        //            {
-        //                ClaimsIdentity identity = await userManager.CreateIdentityAsync(
-        //                               user,
-        //                               DefaultAuthenticationTypes.ExternalBearer);
-        //                context.Validated(identity);
-        //            }
-        //            else
-        //            {
-        //                context.Rejected();
-        //                context.SetError("invalid_group", "Bạn không phải là admin");
-        //            }
-
-        //        }
-        //        else
-        //        {
-        //            context.SetError("invalid_grant", "Tài khoản hoặc mật khẩu không đúng.'");
-        //            context.Rejected();
-        //        }
-        //    }
-        //}
 
 
 
-        //private static UserManager<ApplicationUser> CreateManager(IdentityFactoryOptions<UserManager<ApplicationUser>> options, IOwinContext context)
-        //{
-        //    var userStore = new UserStore<ApplicationUser>(context.Get<PACShopDbContext>());
-        //    var owinManager = new UserManager<ApplicationUser>(userStore);
-        //    return owinManager;
-        //}
+        private static UserManager<ApplicationUser> CreateManager(IdentityFactoryOptions<UserManager<ApplicationUser>> options, IOwinContext context)
+        {
+            var userStore = new UserStore<ApplicationUser>(context.Get<PACShopDbContext>());
+            var owinManager = new UserManager<ApplicationUser>(userStore);
+            return owinManager;
+        }
+
     }
 
 

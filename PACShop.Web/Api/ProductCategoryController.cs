@@ -12,11 +12,12 @@ using PACShop.Web.Models;
 using PACShop.Web.Infrastructure.Extensions;
 //using System.Web.Script.Serialization;
 using System.Data.Entity.Validation;
+using System.Web.Script.Serialization;
 
 namespace PACShop.Web.Api
 {
     [RoutePrefix("api/productcategory")]
-    //[Authorize]
+    [Authorize]
     public class ProductCategoryController : ApiControllerBase
     {
         #region Initialize
@@ -85,7 +86,6 @@ namespace PACShop.Web.Api
                 return response;
             });
         }
-
 
         [Route("create")]
         [HttpPost]
@@ -187,33 +187,34 @@ namespace PACShop.Web.Api
                 return response;
             });
         }
-        //[Route("deletemulti")]
-        //[HttpDelete]
-        //[AllowAnonymous]
-        //public HttpResponseMessage DeleteMulti(HttpRequestMessage request, string checkedProductCategories)
-        //{
-        //    return CreateHttpResponse(request, () =>
-        //    {
-        //        HttpResponseMessage response = null;
-        //        if (!ModelState.IsValid)
-        //        {
-        //            response = request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
-        //        }
-        //        else
-        //        {
-        //            var listProductCategory = new JavaScriptSerializer().Deserialize<List<int>>(checkedProductCategories);
-        //            foreach (var item in listProductCategory)
-        //            {
-        //                _productCategoryService.Delete(item);
-        //            }
 
-        //            _productCategoryService.Save();
+        [Route("deletemulti")]
+        [HttpDelete]
+        [AllowAnonymous]
+        public HttpResponseMessage DeleteMulti(HttpRequestMessage request, string checkedProductCategories)
+        {
+            return CreateHttpResponse(request, () =>
+            {
+                HttpResponseMessage response = null;
+                if (!ModelState.IsValid)
+                {
+                    response = request.CreateResponse(HttpStatusCode.BadRequest, ModelState);
+                }
+                else
+                {
+                    var listProductCategory = new JavaScriptSerializer().Deserialize<List<int>>(checkedProductCategories);
+                    foreach (var item in listProductCategory)
+                    {
+                        _productCategoryService.Delete(item);
+                    }
 
-        //            response = request.CreateResponse(HttpStatusCode.OK, listProductCategory.Count);
-        //        }
+                    _productCategoryService.Save();
 
-        //        return response;
-        //    });
-        //}
+                    response = request.CreateResponse(HttpStatusCode.OK, listProductCategory.Count);
+                }
+
+                return response;
+            });
+        }
     }
 }

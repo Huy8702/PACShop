@@ -1,3 +1,3 @@
 ﻿(function () {
-    angular.module('pacshop.common',['ui.router'])
+    angular.module('pacshop.common', ['ui.router', 'ngBootbox','ngCkeditor'])
 })();
